@@ -31,8 +31,7 @@ class GameOver:
 
             self.game_over_text(60, "GAME OVER", COLOR_RED, (WIN_WIDTH // 2, WIN_HEIGHT // 2 - 50))
             self.game_over_text(30, f"Score: {self.score}", COLOR_WHITE, (WIN_WIDTH // 2, WIN_HEIGHT // 2 + 20))
-            self.game_over_text(25, f"Returning to menu in: {self.countdown}s", COLOR_YELLOW,
-                                (WIN_WIDTH // 2, WIN_HEIGHT // 2 + 80))
+            self.game_over_text(25, f"Returning to menu in: {self.countdown}s", COLOR_YELLOW,(WIN_WIDTH // 2, WIN_HEIGHT // 2 + 80))
 
             pygame.display.flip()
 
