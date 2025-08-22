@@ -2,6 +2,11 @@
 Um jogo casual 2D em pixel art onde você controla uma lontra tentando sobreviver em um rio cada vez mais poluído. Pescaria, obstáculos perigosos e uma mensagem ambiental fazem parte dessa aventura!
 
 
+
+https://github.com/user-attachments/assets/f3f0ea49-9485-4d2b-bb39-52ac3634bbb9
+
+
+
 ## 🎮 Sobre o Jogo
 Otter River é um jogo de evitação de obstáculos e coleta de recursos em um rio poluído.
 
