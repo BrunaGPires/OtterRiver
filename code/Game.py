@@ -20,8 +20,11 @@ class Game:
             if menu_return == MENU_OPTION[0]:
                 level = Level(self.window, 'Level1', menu_return)
                 level_return = level.run()
-                if level_return:
-                    score.save(level.player.score)
+                if level_return == "Menu":
+                    continue
+                else:
+                    game_time = level.elapsed_time // 1000
+                    score.save(level.player.score, game_time)
             elif menu_return == MENU_OPTION[1]:
                 score.show()
             elif menu_return == MENU_OPTION[2]:

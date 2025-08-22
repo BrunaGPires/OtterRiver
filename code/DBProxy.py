@@ -18,7 +18,9 @@ class DBProxy:
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 score INT NOT NULL,
-                date VARCHAR(255) NOT NULL
+                date VARCHAR(255) NOT NULL,
+                time_seconds INT DEFAULT 0,
+                time_display VARCHAR(10) DEFAULT '00:00'
             )
         ''')
         self.connection.commit()
@@ -27,7 +29,12 @@ class DBProxy:
         if 'date' not in score_dict:
             score_dict['date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-        query = 'INSERT INTO dados (name, score, date) VALUES (%(name)s, %(score)s, %(date)s)'
+        if 'time_seconds' not in score_dict:
+            score_dict['time_seconds'] = 0
+        if 'time_display' not in score_dict:
+            score_dict['time_display'] = '00:00'
+
+        query = 'INSERT INTO dados (name, score, date, time_seconds, time_display) VALUES (%(name)s, %(score)s, %(date)s, %(time_seconds)s, %(time_display)s)'
         self.cursor.execute(query, score_dict)
         self.connection.commit()
 

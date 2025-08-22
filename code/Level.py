@@ -9,19 +9,21 @@ from msilib.schema import Font
 from pygame import Surface
 from pygame.locals import Rect
 
+from code.GameOver import GameOver
+
 
 class Level:
     def __init__(self, window, name, game_mode):
         self.window = window
         self.name = name
         self.game_mode = game_mode
-        self.timeout = TIMEOUT_LEVEL
         self.entity_list: list[Entity] = []
         self.entity_list.extend(EntityFactory.get_entity('bg'))
         self.player = EntityFactory.get_entity('player', (WIN_WIDTH // 2, WIN_HEIGHT - 50))
         self.entity_list.append(self.player)
-        pygame.time.set_timer(EVENT_TIMEOUT, TIMEOUT_STEP)
 
+        self.start_time = pygame.time.get_ticks()
+        self.elapsed_time = 0
         self.difficulty_level = 1
         self.base_spawn_interval = SPAWN_INTERVAL
 
@@ -37,6 +39,7 @@ class Level:
 
         while running:
             current_time = pygame.time.get_ticks()
+            self.elapsed_time = current_time - self.start_time
             self.update_difficulty()
 
             current_spawn = max(500, self.base_spawn_interval - (self.difficulty_level * 150))
@@ -47,10 +50,6 @@ class Level:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                if event.type == EVENT_TIMEOUT:
-                    self.timeout -= TIMEOUT_STEP
-                    if self.timeout <= 0:
-                        return True
                 if self.difficulty_level >= MAX_DIFFICULTY:
                     running = False
 
@@ -63,8 +62,7 @@ class Level:
 
             self.level_text(20, f"Score: {self.player.score}", COLOR_WHITE, (30, 20))
             self.level_text(20, f"Lives: {self.player.health}", COLOR_WHITE, (30, 45))
-            self.level_text(20, f"Timeout: {self.timeout//1000}s", COLOR_WHITE, (WIN_WIDTH - 60, 20))
-            self.level_text(20, f'Difficulty: {self.difficulty_level}', COLOR_ORANGE, (40, WIN_HEIGHT - 10))
+            self.level_text(20, f'Difficulty: {self.difficulty_level}', COLOR_ORANGE, (WIN_WIDTH - 60, 20))
 
             pygame.display.flip()
             EntityMediator.verify_collision(entity_list=self.entity_list)
@@ -72,7 +70,10 @@ class Level:
             clock.tick(60)
 
             if self.player.health <= 0:
-                running = False
+                game_over = GameOver(self.window, self.player.score)
+                result = game_over.run()
+                if result == "Menu":
+                    return "Menu"
         return None
 
     def update_difficulty(self):

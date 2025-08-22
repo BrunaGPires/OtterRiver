@@ -15,17 +15,22 @@ class Score:
         self.rect = self.surf.get_rect(left=0, top=0)
         self.db = DBProxy('jogo_lontra')
 
-    def save(self, player_score):
+    def save(self, player_score, game_time):
         name = ""
         font = pygame.font.SysFont("Lucida Sans Typewriter", 25)
         input_active = True
 
+        minutes = game_time // 60
+        seconds = game_time % 60
+        time_str = f"{minutes:02d}:{seconds:02d}"
+
         while input_active:
             self.window.fill((0, 105, 148))
             self.score_text(40, "Type your name (3 letters):", COLOR_ORANGE, (WIN_WIDTH // 2, 150))
+            self.score_text(25, f"Game Time: {time_str}", COLOR_YELLOW, (WIN_WIDTH // 2, 190))
 
             name_surface = font.render(name, True, COLOR_WHITE)
-            name_rect = name_surface.get_rect(center=(WIN_WIDTH // 2, 200))
+            name_rect = name_surface.get_rect(center=(WIN_WIDTH // 2, 250))
             pygame.draw.rect(self.window, COLOR_WHITE, name_rect.inflate(20, 10), 2)
             self.window.blit(name_surface, name_rect)
 
@@ -43,12 +48,14 @@ class Score:
         self.db.save({
             'name': name,
             'score': player_score,
-            'date': datetime.now().strftime('%d/%m/%Y')
+            'date': datetime.now().strftime('%d/%m/%Y'),
+            'time_seconds': game_time,
+            'time_display': time_str
         })
 
         self.window.blit(self.surf, self.rect)
         self.score_text(40, "SCORE SAVED!", COLOR_YELLOW, (WIN_WIDTH // 2, 100))
-        self.score_text(30, f"{name}: {player_score}", COLOR_WHITE, (WIN_WIDTH // 2, 200))
+        self.score_text(30, f"{name}: {player_score} - Time: {time_str}", COLOR_WHITE, (WIN_WIDTH // 2, 200))
 
         waiting = True
         while waiting:
@@ -68,8 +75,8 @@ class Score:
 
         y_pos = 150
         for idx, score in enumerate(scores):
-            _, name, points, date = score
-            self.score_text(20, f"{idx + 1}. {name}: {points} - {date}", COLOR_WHITE, (WIN_WIDTH // 2, y_pos))
+            _, name, points, _, _, time_display = score
+            self.score_text(20, f"{idx + 1}. {name}: {points} - Time: {time_display}", COLOR_WHITE, (WIN_WIDTH // 2, y_pos))
             y_pos += 30
 
         self.score_text(20, "Press ENTER to continue", COLOR_WHITE, (WIN_WIDTH // 2, y_pos + 20))
